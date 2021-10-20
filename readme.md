@@ -6,4 +6,4 @@ To be used in the GEO1000 Python Programming for [Geomatics](https://www.tudelft
 
 Adele Therias 5485193
 
-Jonas Stappers 4603001
+**Jonas Stappers 4603001**
