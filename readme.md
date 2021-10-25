@@ -7,7 +7,7 @@ To be used in the GEO1000 Python Programming for [Geomatics](https://www.tudelft
 --- 
 
 October 29 2021  
-Python for Geometics  
+Python for Geomatics  
 Assignment 4
 
 #### Name(s) and student number(s):
@@ -23,7 +23,11 @@ A paragraph (max. 200 words) explaining how the Python and C++ programs are diff
 
 #### How we solved the task:
 A paragraph reflection on how you went about solving the task (max. 400 words). Which steps did you take? How did you measure the runtime? How did collaboration go with Git? Did you get stuck? Which sources did you consult when you got stuck? Did you expect the results you obtained? Etc.
-
+Adele:
+1. To understand the nbody simulation procedure, I went through the original python code line by line and ran the debugger with stops at multiple points in the script.
+2. I added comments to describe each step taken in the program, including the object types and purpose of each step.
+3. Based on this understanding, I then determined where in the program should be added the write-to-file steps. I felt stuck regarding how to write the introductory line and timestep lines in the same file.
+4. 
 #### Run times:
 Timings for Python, C++ Debug and C++ Release, in a table and visualised in a chart (x-axis: instance size/y-axis: run time).
 
