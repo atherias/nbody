@@ -70,6 +70,7 @@ PAIRS = tuple(combinations(SYSTEM))
 
 
 def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
+    write_first_line("output.csv")
     for i in range(n):
         for ([x1, y1, z1], v1, m1, [x2, y2, z2], v2, m2) in pairs:
             dx = x1 - x2
@@ -89,6 +90,9 @@ def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
             r[0] += dt * vx
             r[1] += dt * vy
             r[2] += dt * vz
+
+        write_output("output.csv")
+
 
 
 def report_energy(bodies=SYSTEM, pairs=PAIRS, e=0.0):
@@ -112,6 +116,16 @@ def offset_momentum(ref, bodies=SYSTEM, px=0.0, py=0.0, pz=0.0):
     v[1] = py / m
     v[2] = pz / m
 
+def write_first_line(filename):
+    fl = open(filename, "w")
+    fl.write("name of the body;position x;position y;position z\n")
+    fl.close()
+
+def write_output(filename):
+    for k, v in BODIES.items():
+        fl = open(filename, "a")
+        fl.write(f"{k};{v[0][0]};{v[0][1]};{v[0][2]}\n")
+        fl.close()
 
 def main(n, ref="sun"):
     offset_momentum(BODIES[ref])
