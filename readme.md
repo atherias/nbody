@@ -27,7 +27,8 @@ Adele:
 1. To understand the nbody simulation procedure, I went through the original python code line by line and ran the debugger with stops at multiple points in the script.
 2. I added comments to describe each step taken in the program, including the object types and purpose of each step.
 3. Based on this understanding, I then determined where in the program should be added the write-to-file steps. I felt stuck regarding how to write the introductory line and timestep lines in the same file.
-4. 
+4. When writing to the csv file, I was stuck at how to include the name of the body as the first item in the csv line. I thought I should retrieve the name from the dictionnary but was 
+unsure how considering that dictionaries are unordered. I found a comment on stackexchange that suggested iterating over dictionary items and returning the key that matches the desired value. https://stackoverflow.com/questions/10458437/what-is-the-difference-between-dict-items-and-dict-iteritems-in-python2 
 #### Run times:
 Timings for Python, C++ Debug and C++ Release, in a table and visualised in a chart (x-axis: instance size/y-axis: run time).
 

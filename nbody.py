@@ -84,7 +84,7 @@ def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
 
     # iterate over each step in number of iterations (e.g. 1-5000)
     for i in range(n):
-        #iterate over each pair of bodies (e.g. saturn and uranus, saturn and jupiter etc)
+        #iterate over values for each pair of bodies (e.g. saturn and uranus, saturn and jupiter etc)
         for ([x1, y1, z1], v1, m1, [x2, y2, z2], v2, m2) in pairs:
 
             #calculate distance between bodies in pair
@@ -110,9 +110,17 @@ def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
             r[1] += dt * vy
             r[2] += dt * vz
 
-        # for i in bodies:
-        #     with("nbody.csv","w") as fh:
-        #         fh.append('{0};{1};{2};{3}\n'.format(i, i[0[0]], i[0[1]], i[0[2]]))
+        #write resulting coordinates to csv file
+
+        def body_name(BODIES, m):
+            for body, mass in iter(dict.items(BODIES)):
+                if m == mass[2]:
+                    return body
+
+        for (r, [vx, vy, vz], m) in bodies:
+            fh = open("nbody.csv", "a")
+            fh.write('{0};{1};{2};{3}\n'.format(body_name(BODIES,m),r[0],r[1],r[2]))
+            fh.close()
 
 
 def report_energy(bodies=SYSTEM, pairs=PAIRS, e=0.0):
@@ -150,14 +158,12 @@ def main(n, ref="sun"):
     advance(0.01, n)
     report_energy()
 
-#main(5000,"sun")
-
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
         fh = open("nbody.csv","w")
-        fh.write("body; x; y; z")
-        main(int(sys.argv[1]))
+        fh.write("body; x; y; z\n")
         fh.close()
+        main(int(sys.argv[1]))
         sys.exit(0)
     else:
         print(f"This is {sys.argv[0]}")
