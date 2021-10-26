@@ -14,6 +14,8 @@
 #define _USE_MATH_DEFINES // https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants?view=msvc-160
 #include <cmath>
 #include <iostream>
+#include <fstream>
+#include <cstdlib>
 
 
 // these values are constant and not allowed to be changed
@@ -133,6 +135,15 @@ void advance(body state[BODIES_COUNT], double dt) {
      */
     for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
         state[i].position += state[i].velocity * dt;
+
+        //Append positions to file
+        std::ofstream file;
+        file.open("output_cpp.csv", std::ios::app);
+        if (file.is_open()){
+            file << state[i].name << ";" << state[i].position.x << ";" << state[i].position.y << ";" << state[i].position.z << std::endl;
+            file.close();
+        }
+
     }
 }
 
@@ -238,6 +249,10 @@ body state[] = {
         }
 };
 
+void write_file(){
+
+
+}
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -249,6 +264,15 @@ int main(int argc, char **argv) {
         const unsigned int n = atoi(argv[1]);
         offset_momentum(state);
         std::cout << energy(state) << std::endl;
+
+        // Write first line to file
+        std::ofstream file;
+        file.open("output_cpp.csv", std::ios::out);
+        if (file.is_open()){
+            file << "name of the body;position x;position y;position z" << std::endl;
+            file.close();
+        }
+
         for (int i = 0; i < n; ++i) {
             advance(state, 0.01);
         }
