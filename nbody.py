@@ -11,6 +11,7 @@
 # modified by Adele Therias
 
 import sys
+import time
 from math import sqrt, pi as PI
 
 #create a list of all possible combinations of items from a list
@@ -118,9 +119,7 @@ def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
                     return body
 
         for (r, [vx, vy, vz], m) in bodies:
-            fh = open("nbody.csv", "a")
             fh.write('{0};{1};{2};{3}\n'.format(body_name(BODIES,m),r[0],r[1],r[2]))
-            fh.close()
 
 
 def report_energy(bodies=SYSTEM, pairs=PAIRS, e=0.0):
@@ -159,11 +158,14 @@ def main(n, ref="sun"):
     report_energy()
 
 if __name__ == "__main__":
+    start_time = time.time()
     if len(sys.argv) >= 2:
         fh = open("nbody.csv","w")
         fh.write("body; x; y; z\n")
         fh.close()
+        fh = open("nbody.csv", "a")
         main(int(sys.argv[1]))
+        print("Run time is %s seconds" % (time.time() - start_time))
         sys.exit(0)
     else:
         print(f"This is {sys.argv[0]}")

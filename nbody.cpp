@@ -9,11 +9,16 @@
    
    contributed by cvergu
    slightly modified by bmmeijers
+   modified by Adele Therias
 */
 
 #define _USE_MATH_DEFINES // https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants?view=msvc-160
 #include <cmath>
 #include <iostream>
+#include <fstream>
+#include <chrono>
+#include <stdio.h>
+using namespace std;
 
 
 // these values are constant and not allowed to be changed
@@ -133,6 +138,10 @@ void advance(body state[BODIES_COUNT], double dt) {
      */
     for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
         state[i].position += state[i].velocity * dt;
+        ofstream out_stream;
+        out_stream.open("nbody_c.csv", std::ios_base::app);
+        out_stream << state[i].name << ";" << state[i].position.x << ";" << state[i].position.y << ";" << state[i].position.y <<"\n";
+        out_stream.close();
     }
 }
 
@@ -239,6 +248,7 @@ body state[] = {
 };
 
 
+
 int main(int argc, char **argv) {
     if (argc != 2) {
         std::cout << "This is " << argv[0] << std::endl;
@@ -246,13 +256,34 @@ int main(int argc, char **argv) {
         std::cout << "(to set the number of iterations for the n-body simulation)." << std::endl;
         return EXIT_FAILURE;
     } else {
+        using std::chrono::system_clock;
+        using std::chrono::duration_cast;
+        using std::chrono::duration;
+        using std::chrono::seconds;
+
+        double sum = 0;
+        double add = 1;
+
+        auto begin = std::chrono::high_resolution_clock::now();
+
         const unsigned int n = atoi(argv[1]);
+        ofstream out_stream;
+        out_stream.open("nbody_c.csv");
+        out_stream << "body; x; y; z\n";
+        out_stream.close();
+
         offset_momentum(state);
         std::cout << energy(state) << std::endl;
         for (int i = 0; i < n; ++i) {
             advance(state, 0.01);
         }
         std::cout << energy(state) << std::endl;
+
+        auto end = std::chrono::high_resolution_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+
+        printf("Run time: %.3f seconds.\n", elapsed.count() * 1e-9);
+
         return EXIT_SUCCESS;
     }
 }
