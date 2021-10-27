@@ -20,7 +20,13 @@ Jonas Stappers: **4603001**
 
 #### Difference between Python and C++ programs:
 A paragraph (max. 200 words) explaining how the Python and C++ programs are different (How is the information in the simulation represented: Which data types do the programs use to represent the data for the simulation?)
-
+Adele:
+- python stores information about the bodies and their original features in a dictionary with body name as key and tuple of list for position, list for velocity and floating point number for mass.
+- python then creates tuples that include the data in the dictionary, then forms a list that contains all possible combinations of bodies (their values)
+- as python iterates, it updates the values of the bodies in the list
+- C++ stores information about the bodies in the form of a user-defined class called "object" that includes a string name, a vector for position, a vector for velocity and a floating point number with 2 decimal precision for mass.
+- C++ updates the values in the vectors during the iterations
+- 
 #### How we solved the task:
 A paragraph reflection on how you went about solving the task (max. 400 words). Which steps did you take? How did you measure the runtime? How did collaboration go with Git? Did you get stuck? Which sources did you consult when you got stuck? Did you expect the results you obtained? Etc.
 Adele:
@@ -36,14 +42,16 @@ unsure how considering that dictionaries are unordered. I found a comment on sta
 9. Then, I identified the line in the program where each position should be written to the csv file. I initially found it confusing to format and refer to an element from the vector.
 10. To address this challenge, I referred to two resources. One focussed on formatting strings in C++ (https://www.codegrepper.com/code-examples/c/string+format+c%2B%2B), the other focused on referencing vector elements (https://thispointer.com/c-how-to-get-element-by-index-in-vector-at-vs-operator/)
 11. I started by writing one vector attribute to the cv (name) and once the code worked I added the other attributes.
+12. I tried to open the file stream within the state function to reduce computing time, but the program still took longer in C++ than python.
+13. 
 #### Run times:
 Timings for Python, C++ Debug and C++ Release, in a table and visualised in a chart (x-axis: instance size/y-axis: run time).
 
 |             | n=5000 | n=500.000 | n=5.000.000 | n=50.000.000 |
-|-------------|--------|-----------|-------------|--------------|
-| Python      | 0.1092677116394043 seconds | 11.164307832717896 seconds | 124.84005880355835 seconds | 1268.6206676959991 seconds             |
-| C++ Debug   |        |           |             |              |
-| C++ Release |        |           |             |              |
+|-------------|---------------|----------------|-----------------|-----------------|
+| Python      | 0.109 seconds | 11.164 seconds | 124.840 seconds | 1268.621 seconds|
+| C++ Debug   | 0.739 seconds | 77.812 seconds |  87.705 seconds |              |
+| C++ Release | 0.774 seconds | 86.477 seconds | 1322.458 seconds|              |
 
 #### QGIS visualization:
 One (or more, e.g. 1 overview and 1 close-up) screenshot of QGIS, where you have loaded the CSV files your code did produce for 5’000 iterations (for both C++ as well as Python programs) 

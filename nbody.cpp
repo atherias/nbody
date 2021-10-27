@@ -100,6 +100,8 @@ public:
 
 
 void advance(body state[BODIES_COUNT], double dt) {
+    ofstream out_stream;
+    out_stream.open("nbody_c.csv", std::ios_base::app);
     /*
      * We precompute the quantity (r_i - r_j)
      */
@@ -138,10 +140,8 @@ void advance(body state[BODIES_COUNT], double dt) {
      */
     for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
         state[i].position += state[i].velocity * dt;
-        ofstream out_stream;
-        out_stream.open("nbody_c.csv", std::ios_base::app);
         out_stream << state[i].name << ";" << state[i].position.x << ";" << state[i].position.y << ";" << state[i].position.y <<"\n";
-        out_stream.close();
+
     }
 }
 
@@ -270,7 +270,6 @@ int main(int argc, char **argv) {
         ofstream out_stream;
         out_stream.open("nbody_c.csv");
         out_stream << "body; x; y; z\n";
-        out_stream.close();
 
         offset_momentum(state);
         std::cout << energy(state) << std::endl;
