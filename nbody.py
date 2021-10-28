@@ -8,11 +8,13 @@
 # 2to3
 # modified by Andriy Misyura
 # slightly modified by bmmeijers
+# modified by Adele Therias
 
 import sys
+import time
 from math import sqrt, pi as PI
 
-
+#create a list of all possible combinations of items from a list
 def combinations(l):
     result = []
     for x in range(len(l) - 1):
@@ -24,6 +26,13 @@ def combinations(l):
 
 SOLAR_MASS = 4 * PI * PI
 DAYS_PER_YEAR = 365.24
+
+'''Dictionary of key-value pairs
+key = name of body
+value = tuple that includes:
+    (1) list - starting coordinates (x, y, z)
+    (2) list - velocity in each direction (x, y, z)
+    (3) float - mass of the body as a function of solar mass'''
 
 BODIES = {
     "sun": ([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], SOLAR_MASS),
@@ -65,18 +74,27 @@ BODIES = {
     ),
 }
 
+#create tuple that includes all values for each body (coordinates, velocity in each direction, mass)
 SYSTEM = tuple(BODIES.values())
+
+#create tuple of lists that each contains one possible combination of two bodies
 PAIRS = tuple(combinations(SYSTEM))
 
 
 def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
-    write_first_line("output.csv")
+
+    # iterate over each step in number of iterations (e.g. 1-5000)
     for i in range(n):
+        #iterate over values for each pair of bodies (e.g. saturn and uranus, saturn and jupiter etc)
         for ([x1, y1, z1], v1, m1, [x2, y2, z2], v2, m2) in pairs:
+
+            #calculate distance between bodies in pair
             dx = x1 - x2
             dy = y1 - y2
             dz = z1 - z2
             dist = sqrt(dx * dx + dy * dy + dz * dz)
+
+            #update velocities in each direction for each body in pair
             mag = dt / (dist * dist * dist)
             b1m = m1 * mag
             b2m = m2 * mag
@@ -86,46 +104,52 @@ def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
             v2[2] += dz * b1m
             v2[1] += dy * b1m
             v2[0] += dx * b1m
+
+        # iterate over bodies and update positions based on velocities
         for (r, [vx, vy, vz], m) in bodies:
             r[0] += dt * vx
             r[1] += dt * vy
             r[2] += dt * vz
 
-        write_output("output.csv")
+        #write resulting coordinates to csv file
 
+        def body_name(BODIES, m):
+            for body, mass in iter(dict.items(BODIES)):
+                if m == mass[2]:
+                    return body
+
+        # for (r, [vx, vy, vz], m) in bodies:
+        #     fh.write('{0};{1};{2};{3}\n'.format(body_name(BODIES,m),r[0],r[1],r[2]))
 
 
 def report_energy(bodies=SYSTEM, pairs=PAIRS, e=0.0):
+    #iterate over each pair of bodies (e.g. saturn and uranus, saturn and jupiter etc)
     for ((x1, y1, z1), v1, m1, (x2, y2, z2), v2, m2) in pairs:
         dx = x1 - x2
         dy = y1 - y2
         dz = z1 - z2
+        #determine energy / force(?) based on distance of bodies from each other
         e -= (m1 * m2) / ((dx * dx + dy * dy + dz * dz) ** 0.5)
+
+    #iterate over all bodies and modify energy / force(?) based on all velocities
     for (r, [vx, vy, vz], m) in bodies:
         e += m * (vx * vx + vy * vy + vz * vz) / 2.0
     print("Energy: %.9f" % e)
 
 
 def offset_momentum(ref, bodies=SYSTEM, px=0.0, py=0.0, pz=0.0):
+    #iterate over all bodies, calculate momentum offset based on velocity in each direction and mass, update velocity values
     for (r, [vx, vy, vz], m) in bodies:
         px -= vx * m
         py -= vy * m
         pz -= vz * m
+
+    #set values for body as new ref
     (r, v, m) = ref
     v[0] = px / m
     v[1] = py / m
     v[2] = pz / m
 
-def write_first_line(filename):
-    fl = open(filename, "w")
-    fl.write("name of the body;position x;position y;position z\n")
-    fl.close()
-
-def write_output(filename):
-    for k, v in BODIES.items():
-        fl = open(filename, "a")
-        fl.write(f"{k};{v[0][0]};{v[0][1]};{v[0][2]}\n")
-        fl.close()
 
 def main(n, ref="sun"):
     offset_momentum(BODIES[ref])
@@ -133,10 +157,15 @@ def main(n, ref="sun"):
     advance(0.01, n)
     report_energy()
 
-
 if __name__ == "__main__":
+    start_time = time.time()
     if len(sys.argv) >= 2:
+        # fh = open("nbody.csv","w")
+        # fh.write("body; x; y; z\n")
+        # fh.close()
+        # fh = open("nbody.csv", "a")
         main(int(sys.argv[1]))
+        print("Run time is %s seconds" % (time.time() - start_time))
         sys.exit(0)
     else:
         print(f"This is {sys.argv[0]}")
