@@ -15,13 +15,18 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
-#include <cstdlib>
 
 
 // these values are constant and not allowed to be changed
 const double SOLAR_MASS = 4 * M_PI * M_PI;
 const double DAYS_PER_YEAR = 365.24;
 const unsigned int BODIES_COUNT = 5;
+
+// Global boolean to control whether the program writes to file or not
+const bool WRITETOFILE = true;
+// Create a global filestream so it can be used throughout the program in multiple functions
+std::ofstream file;
+
 
 
 class vector3d {
@@ -103,6 +108,9 @@ void advance(body state[BODIES_COUNT], double dt) {
     // 2D array (to hold: BODIES_COUNT x BODIES_COUNT elements)
     vector3d rij[BODIES_COUNT][BODIES_COUNT];
 
+
+
+
     for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
         for (unsigned int j = i + 1; j < BODIES_COUNT; ++j) {
             rij[i][j] = state[i].position - state[j].position;
@@ -135,17 +143,21 @@ void advance(body state[BODIES_COUNT], double dt) {
      */
     for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
         state[i].position += state[i].velocity * dt;
-
-        //Append positions to file
-        std::ofstream file;
-        file.open("output_cpp.csv", std::ios::app);
-        if (file.is_open()){
-            file << state[i].name << ";" << state[i].position.x << ";" << state[i].position.y << ";" << state[i].position.z << std::endl;
-            file.close();
-        }
-
     }
+
+    // Write to file
+    if (file.is_open()) {
+        for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
+            file << state[i].name << ";" << state[i].position.x << ";" << state[i].position.y << ";"
+                       << state[i].position.z << std::endl;
+        }
+    }
+
 }
+
+
+
+
 
 void offset_momentum(body state[BODIES_COUNT]) {
     vector3d &sun_velocity = state[0].velocity;
@@ -249,10 +261,6 @@ body state[] = {
         }
 };
 
-void write_file(){
-
-
-}
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -265,16 +273,20 @@ int main(int argc, char **argv) {
         offset_momentum(state);
         std::cout << energy(state) << std::endl;
 
-        // Write first line to file
-        std::ofstream file;
-        file.open("output_cpp.csv", std::ios::out);
-        if (file.is_open()){
-            file << "name of the body;position x;position y;position z" << std::endl;
-            file.close();
+
+        if (WRITETOFILE == true) {
+            // Write first line to file
+            file.open("output_cpp.csv", std::ios::out);
+            if (file.is_open()) {
+                file << "name of the body;position x;position y;position z" << std::endl;
+            }
         }
 
         for (int i = 0; i < n; ++i) {
             advance(state, 0.01);
+        }
+        if (WRITETOFILE == true) {
+            file.close();
         }
         std::cout << energy(state) << std::endl;
         return EXIT_SUCCESS;
