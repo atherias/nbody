@@ -14,7 +14,7 @@
 import sys
 from math import sqrt, pi as PI
 #Global variable to control whether the program should write to the csv file
-writetofile = False
+writetofile = True
 
 #create a list of all possible combinations of items from a list
 def combinations(l):

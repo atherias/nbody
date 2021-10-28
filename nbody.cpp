@@ -28,7 +28,7 @@ const unsigned int BODIES_COUNT = 5;
 
 // Global boolean to control whether the program writes to file or not
 const bool WRITETOFILE = true;
-// Create a global filestream so it can be used throughout the program in multiple functions
+//Create a global filestream so it can be used throughout the program in multiple functions and to open/close outside iteration
 std::ofstream file;
 
 
@@ -106,10 +106,6 @@ public:
 
 
 void advance(body state[BODIES_COUNT], double dt) {
-    if (WRITETOFILE == true) {
-        ofstream out_stream;
-        out_stream.open("output_cpp.csv", std::ios_base::app);
-    }
     /*
      * We precompute the quantity (r_i - r_j)
      */
@@ -154,10 +150,10 @@ void advance(body state[BODIES_COUNT], double dt) {
     if (file.is_open()) {
         for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
             file << state[i].name << ";" << state[i].position.x << ";" << state[i].position.y << ";"
-                       << state[i].position.z << std::endl;
-            file.close();
+                 << state[i].position.z << std::endl;
         }
     }
+
 
 }
 
@@ -282,11 +278,14 @@ int main(int argc, char **argv) {
             file.open("output_cpp.csv", std::ios::out);
             if (file.is_open()) {
                 file << "name of the body;position x;position y;position z" << std::endl;
-                file.close();
             }
         }
+
         for (int i = 0; i < n; ++i) {
             advance(state, 0.01);
+        }
+        if (WRITETOFILE == true) {
+            file.close();
         }
         std::cout << energy(state) << std::endl;
         return EXIT_SUCCESS;
