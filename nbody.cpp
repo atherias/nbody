@@ -10,21 +10,27 @@
    contributed by cvergu
    slightly modified by bmmeijers
    modified by Adele Therias
+   modified by Jonas Stappers
 */
 
 #define _USE_MATH_DEFINES // https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants?view=msvc-160
 #include <cmath>
 #include <iostream>
 #include <fstream>
-#include <chrono>
-#include <stdio.h>
-using namespace std;
+
 
 
 // these values are constant and not allowed to be changed
 const double SOLAR_MASS = 4 * M_PI * M_PI;
 const double DAYS_PER_YEAR = 365.24;
 const unsigned int BODIES_COUNT = 5;
+
+
+// Global boolean to control whether the program writes to file or not
+const bool WRITETOFILE = true;
+// Create a global filestream so it can be used throughout the program in multiple functions
+std::ofstream file;
+
 
 
 class vector3d {
@@ -100,8 +106,10 @@ public:
 
 
 void advance(body state[BODIES_COUNT], double dt) {
-//    ofstream out_stream;
-//    out_stream.open("nbody_c.csv", std::ios_base::app);
+    if (WRITETOFILE == true) {
+        ofstream out_stream;
+        out_stream.open("output_cpp.csv", std::ios_base::app);
+    }
     /*
      * We precompute the quantity (r_i - r_j)
      */
@@ -140,8 +148,17 @@ void advance(body state[BODIES_COUNT], double dt) {
      */
     for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
         state[i].position += state[i].velocity * dt;
-
     }
+
+    // Write to file
+    if (file.is_open()) {
+        for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
+            file << state[i].name << ";" << state[i].position.x << ";" << state[i].position.y << ";"
+                       << state[i].position.z << std::endl;
+            file.close();
+        }
+    }
+
 }
 
 void offset_momentum(body state[BODIES_COUNT]) {
@@ -255,40 +272,23 @@ int main(int argc, char **argv) {
         std::cout << "(to set the number of iterations for the n-body simulation)." << std::endl;
         return EXIT_FAILURE;
     } else {
-        using std::chrono::system_clock;
-        using std::chrono::duration_cast;
-        using std::chrono::duration;
-        using std::chrono::seconds;
-
-        double sum = 0;
-        double add = 1;
-
-        auto begin = std::chrono::high_resolution_clock::now();
-
         const unsigned int n = atoi(argv[1]);
-
-//        ofstream out_stream;
-//        out_stream.open("nbody_c.csv", std::ios_base::app);
-//        out_stream << "body; x; y; z\n";
-
         offset_momentum(state);
         std::cout << energy(state) << std::endl;
 
+
+        if (WRITETOFILE == true) {
+            // Write first line to file
+            file.open("output_cpp.csv", std::ios::out);
+            if (file.is_open()) {
+                file << "name of the body;position x;position y;position z" << std::endl;
+                file.close();
+            }
+        }
         for (int i = 0; i < n; ++i) {
             advance(state, 0.01);
-//            for (unsigned j = 0; j < BODIES_COUNT; ++j) {
-//                out_stream << state[j].name << ";" << state[j].position.x << ";" << state[j].position.y << ";" << state[j].position.z <<"\n";
-            }
-
-
+        }
         std::cout << energy(state) << std::endl;
-
-
-        auto end = std::chrono::high_resolution_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-
-        printf("Run time: %.3f seconds.\n", elapsed.count() * 1e-9);
-
         return EXIT_SUCCESS;
     }
 }

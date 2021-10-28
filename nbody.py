@@ -9,10 +9,12 @@
 # modified by Andriy Misyura
 # slightly modified by bmmeijers
 # modified by Adele Therias
+# modified by Jonas Stappers
 
 import sys
-import time
 from math import sqrt, pi as PI
+#Global variable to control whether the program should write to the csv file
+writetofile = False
 
 #create a list of all possible combinations of items from a list
 def combinations(l):
@@ -82,6 +84,9 @@ PAIRS = tuple(combinations(SYSTEM))
 
 
 def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
+    #Open file in function, if the global boolean variable is true
+    if writetofile:
+        fl = open('output.csv', "a")
 
     # iterate over each step in number of iterations (e.g. 1-5000)
     for i in range(n):
@@ -111,16 +116,13 @@ def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
             r[1] += dt * vy
             r[2] += dt * vz
 
-        #write resulting coordinates to csv file
-
-        def body_name(BODIES, m):
-            for body, mass in iter(dict.items(BODIES)):
-                if m == mass[2]:
-                    return body
-
-        # for (r, [vx, vy, vz], m) in bodies:
-        #     fh.write('{0};{1};{2};{3}\n'.format(body_name(BODIES,m),r[0],r[1],r[2]))
-
+        #Write to file
+        if writetofile:
+            for k, v in BODIES.items():
+                fl.write(f"{k};{v[0][0]};{v[0][1]};{v[0][2]}\n")
+    #Close file
+    if writetofile:
+        fl.close()
 
 def report_energy(bodies=SYSTEM, pairs=PAIRS, e=0.0):
     #iterate over each pair of bodies (e.g. saturn and uranus, saturn and jupiter etc)
@@ -152,20 +154,19 @@ def offset_momentum(ref, bodies=SYSTEM, px=0.0, py=0.0, pz=0.0):
 
 
 def main(n, ref="sun"):
+    if writetofile:
+        fl = open('output.csv', "w")
+        fl.write("name of the body;position x;position y;position z\n")
+        fl.close()
     offset_momentum(BODIES[ref])
     report_energy()
     advance(0.01, n)
     report_energy()
 
+
 if __name__ == "__main__":
-    start_time = time.time()
     if len(sys.argv) >= 2:
-        # fh = open("nbody.csv","w")
-        # fh.write("body; x; y; z\n")
-        # fh.close()
-        # fh = open("nbody.csv", "a")
         main(int(sys.argv[1]))
-        print("Run time is %s seconds" % (time.time() - start_time))
         sys.exit(0)
     else:
         print(f"This is {sys.argv[0]}")
