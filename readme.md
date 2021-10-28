@@ -41,17 +41,17 @@ unsure how considering that dictionaries are unordered. I found a comment on sta
 8. I began by writing out the header row into the csv to ensure it was working.
 9. Then, I identified the line in the program where each position should be written to the csv file. I initially found it confusing to format and refer to an element from the vector.
 10. To address this challenge, I referred to two resources. One focussed on formatting strings in C++ (https://www.codegrepper.com/code-examples/c/string+format+c%2B%2B), the other focused on referencing vector elements (https://thispointer.com/c-how-to-get-element-by-index-in-vector-at-vs-operator/)
-11. I started by writing one vector attribute to the cv (name) and once the code worked I added the other attributes.
+11. I started by writing one vector attribute to the csv (body name) and once the code worked I added the other attributes.
 12. I tried to open the file stream within the state function to reduce computing time, but the program still took longer in C++ than python.
 13. 
 #### Run times:
 Timings for Python, C++ Debug and C++ Release, in a table and visualised in a chart (x-axis: instance size/y-axis: run time).
 
-|             | n=5000 | n=500.000 | n=5.000.000 | n=50.000.000 |
+|             | n=5000--------| n=500.000------| n=5.000.000-----| n=50.000.000----|
 |-------------|---------------|----------------|-----------------|-----------------|
-| Python      | 0.109 seconds | 11.164 seconds | 124.840 seconds | 1268.621 seconds|
-| C++ Debug   | 0.739 seconds | 77.812 seconds |  87.705 seconds |              |
-| C++ Release | 0.774 seconds | 86.477 seconds | 1322.458 seconds|              |
+| Python      | |  |  | |
+| C++ Debug   |  ||  |              |
+| C++ Release |  |  | |              |
 
 #### QGIS visualization:
 One (or more, e.g. 1 overview and 1 close-up) screenshot of QGIS, where you have loaded the CSV files your code did produce for 5’000 iterations (for both C++ as well as Python programs) 

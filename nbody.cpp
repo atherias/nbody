@@ -100,8 +100,8 @@ public:
 
 
 void advance(body state[BODIES_COUNT], double dt) {
-    ofstream out_stream;
-    out_stream.open("nbody_c.csv", std::ios_base::app);
+//    ofstream out_stream;
+//    out_stream.open("nbody_c.csv", std::ios_base::app);
     /*
      * We precompute the quantity (r_i - r_j)
      */
@@ -140,7 +140,6 @@ void advance(body state[BODIES_COUNT], double dt) {
      */
     for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
         state[i].position += state[i].velocity * dt;
-        out_stream << state[i].name << ";" << state[i].position.x << ";" << state[i].position.y << ";" << state[i].position.y <<"\n";
 
     }
 }
@@ -267,16 +266,23 @@ int main(int argc, char **argv) {
         auto begin = std::chrono::high_resolution_clock::now();
 
         const unsigned int n = atoi(argv[1]);
-        ofstream out_stream;
-        out_stream.open("nbody_c.csv");
-        out_stream << "body; x; y; z\n";
+
+//        ofstream out_stream;
+//        out_stream.open("nbody_c.csv", std::ios_base::app);
+//        out_stream << "body; x; y; z\n";
 
         offset_momentum(state);
         std::cout << energy(state) << std::endl;
+
         for (int i = 0; i < n; ++i) {
             advance(state, 0.01);
-        }
+//            for (unsigned j = 0; j < BODIES_COUNT; ++j) {
+//                out_stream << state[j].name << ";" << state[j].position.x << ";" << state[j].position.y << ";" << state[j].position.z <<"\n";
+            }
+
+
         std::cout << energy(state) << std::endl;
+
 
         auto end = std::chrono::high_resolution_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
